@@ -2,7 +2,6 @@ from sys import argv
 
 import click
 
-import periodictable
 from help_menus import hist_help
 from dalton_scripts.main import dalton
 from models import History
@@ -16,3 +15,44 @@ from models import History
 def hist(help_):
     if help_ or len(argv) == 2:
         hist_help()
+
+
+@hist.command()
+@click.argument("name")
+@click.argument("formula")
+def save(name, formula):
+    if name in History.keys():
+        click.echo("%s already saved in history" % name)
+    else:
+        History.save(formula, name)
+        click.echo("%s saved to user history" % name)
+
+
+@hist.command()
+@click.option("-v", "--verbose",
+              is_flag=True, default=False)
+def list_(verbose):
+    if any(History.get()):
+        History.show(verbose)
+    else:
+        click.echo("You have not saved any compounds")
+
+
+@hist.command()
+@click.argument("name")
+def remove(name):
+    if name in History.keys():
+        History.remove(name)
+        click.echo("%s removed from user histroy" % name)
+    else:
+        click.echo("You have not saved a compound %s" % name)
+
+
+@hist.command()
+@click.confirmation_option()
+def clear():
+    if any(History.get()):
+        History.clear()
+        click.echo("History cleared")
+    else:
+        click.echo("You have not saved any compounds")

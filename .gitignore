@@ -4,3 +4,4 @@ dalton_cli.egg-info/
 # Python likes to generate this folder sometimes so I'm putting it in
 # .gitignore just to be safe
 __pycache__/
+

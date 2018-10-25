@@ -173,5 +173,5 @@ def hist(ctx,  # command context
               type=click.IntRange(1, 10, clamp=True))
 @click.option("--units",
               type=click.Choice(["daltons", "gpm"]))
-def opts(sf, units):  # todo: this will require making a whole config file
+def config(sf, units):  # todo: this will require making a whole config file
     pass
