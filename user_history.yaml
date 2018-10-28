@@ -1,6 +1,3 @@
 ethanol:
   formula: EtOH
   mass: 46.069
-water:
-  formula: H2O
-  mass: 18.015

@@ -32,13 +32,21 @@ $ pip install dalton-cli
 
 If you do not have pip, you can read how to download it [here](https://pip.pypa.io/en/stable/installing/).
 
-You may also clone the GitHub repo, but this is not recommended.
+You may also clone the GitHub repo, but this is not recommended unless you wish to work on it (and anyway, you still 
+have to install it with pip).
 
 ```bash
 $ git clone https://github.com/periodicaidan/dalton-cli
+$ cd dalton-cli
+$ pip install .
 ```
 
-I am working on a way to install this through Homebrew, APT, and so forth
+If you wish to edit and play with **Dalton-CLi**'s source code, you can do so by performing those three commands above,
+but setting the `--editable` flag on pip:
+
+```bash
+$ pip install --editable .
+```
 
 **Dalton-CLi** requires a Python interpreter run. For Macintosh users, you've no need to install anything as
 **Dalton-CLi** will run just fine on the interpreter shipped with every Apple computer.
@@ -55,7 +63,7 @@ This will show you a "splash page" of sorts, and give you a rundown of everythin
 
 ### `calc` — Get the Molar Mass of a Compound
 
-The most basic command in **Dalton-CLi** is the `calc` command.
+The core command of **Dalton-CLi** is the `calc` command.
 
 ```bash
 $ dalton calc H2O
@@ -90,12 +98,15 @@ $ dalton calc C2H5OH --mass-spec
    H : 13.1%
    O : 34.7%
 
-$ dalton calc -M NaHSO4
-  Na : 19.1%
-   H : 0.8%
-   S : 26.7%
-   O : 53.3%
+$ dalton calc -Mi NaHSO4  # using -M with the -i or --histogram flag will display a bar graph
+  Na : ███████████ 19.1%
+   H :  0.8%
+   S : ████████████████ 26.7%
+   O : ███████████████████████████████ 53.3%
+
 ```
+
+TODO: Expand the features of `calc`
 
 ### `moiety` — Custom Chemical Symbols
 
@@ -103,13 +114,13 @@ Chemical formulas often become long and confusing, so chemists often come up wit
 or groups of atoms in a molecule that are considered as a unit. One of **Dalton-CLi**'s key features is to allow users
 to define their own moieties with the `moiety` command.
 
-To define a new moiety, you use the `--add` or `-a` flag, followed by the symbol for your moiety and then the group that
+To define a new moiety, you use the `add` command, followed by the symbol for your moiety and then the group that
 the symbol represents. To demonstrate, one often sees the group C2H5 (ethyl) in chemistry, so we often abbreviate it "Et". 
-If we would like to calculate the molecular weight of ethanol by simply saying `dalton calc EtOH`, we would do it as 
+If we would like to calculate the molecular weight of ethanol by simply issuing `dalton calc EtOH`, we would do it as 
 follows:
 
 ```bash
-$ dalton moiety --add Et C2H5  # Define an ethyl moiety
+$ dalton moiety add Et C2H5  # Define an ethyl moiety
 Et added to moiety profile (mass: 29.062 g/mol)
 
 $ dalton calc EtOH
@@ -129,56 +140,78 @@ Note that the way **Dalton-CLi** parses chemical formulas requires you to begin 
 you would like to use all lowercase letters, you must wrap the symbol in parentheses (which is good practice anyway,
 as it confuses a human as much as it will confuse the parser).
 
-But **Dalton-CLi** lets you do far more with moieties than simply create them. Say that you wanted to add a phenyl
-(C6H5, a ring structure) group to your moiety profile, but you made a mistake and entered it in with one too many
+But **Dalton-CLi** lets you do more with moieties than simply create them. Say that you wanted to add a phenyl
+group (C6H5, a ring structure) to your moiety profile, but you made a mistake and entered it in with one too many
 hydrogen atoms.
 
 ```bash
-$ dalton moiety -a Ph C6H6  # Whoops! That's benzene, not phenyl
-Ph added to user profile (mass: 78.114 g/mol)  # ~1 gram too heavy
+$ dalton moiety add Ph C6H6  # Whoops! That's benzene, not phenyl
+Ph added to moiety profile (mass: 78.114 g/mol)  # ~1 gram too heavy
 ```
 
-Never fear! Simply use the `--change` or `-c` flag to edit an already-registered moiety.
+Never fear! Simply use the `change` command to edit an already-registered moiety's equivalent formula.
 
 ```bash
-$ dalton moiety --change Ph C6H5
+$ dalton moiety change Ph C6H5
 Changed value of Ph to C6H5 (77.106 g/mol)
+```
+
+If you'd like to change the symbol associated with a given moiety, you can do so by issuing the `rename` command.
+
+```bash
+$ dalton moiety add Mw CH3  # Typo! That should be "Me"
+Mw added to moiety profile (mass: 15.035 g/mol)
+
+$ dalton moiety rename Mw Me
+Mw renamed to Me
+
+$ dalton calc MeCOOH  # acetic acid
+60.052 g/mol
 ```
 
 We all forget things, [even very basic things](https://twitter.com/jobium/status/1036670558539112448?lang=en). Maybe
 you've forgotten whether you registered a moiety, or what abbreviation you gave it, or maybe you accidentally
 registered the same moiety under two different names. You can pull up a list of all the moieties you've added using the
-`--list` or `-l` flag. By default it just shows you the symbol and its mass, but you can view the moiety as well in a
+`list` command. By default it just shows you the symbol and its mass, but you can view the moiety as well in a
 table format with the `--verbose` or `-v` flag.
 
 ```bash
-$ dalton moiety --list
+$ dalton moiety list
         Et :     29.062
+        Me :     15.035
         Ph :     77.106
 
-$ dalton moiety -lv
+$ dalton moiety list -v
 MOIETY  | EQUIVALENT FORMULA |       MASS
 -----------------------------------------
      Et |               C2H5 |     29.062
+     Me |                CH3 |     15.035
      Ph |               C6H5 |     77.106
 ```
 
-To round out `moiety`'s CRUD functionality, you can use the `--delete` or `-d` flag to delete a moiety.
+To round out `moiety`'s CRUD functionality, you can use the `delete` command to delete a moiety.
 
 ```bash
-$ dalton moiety --delete Ph
+$ dalton moiety delete Ph
 Removed Ph from user moieties
 
-$ dalton moiety -l
+$ dalton moiety list
         Et :     29.062
+        Me :     15.035
 ```
 
-**Dalton-CLi** stores the user moieties in a `user_moieties.yml` file. So even if you log out of your terminal session
+You may also batch-delete moieties by passing multiple arguments to `delete`. Note that if you pass a moiety to `delete`
+that has not been registered, it will issue a warning, but the `delete` will still go through by default (for more
+about changing default behavior, see the [`config`](#config--access-and-set-user-options) section). You can also delete
+all the registered moieties with the `-A` or `--all` flag. Note that this will bring up a confirmation prompt, which
+you can skip by also setting the `--yes` flag.
+
+**Dalton-CLi** stores the user moieties in a `user_moieties.yaml` file. So even if you log out of your terminal session
 or shut down your computer, the moieties you've registered will persist until you delete them.
 
 **Dalton-CLi** ships with several common moieties to get you started, such as ethyl (Et), phenyl (Ph), pyridinium (Pym),
-and cyclohexane (Chxn), just to name a few. But of course, if you'd like to start with a clean slate, you may do so by 
-issuing `dalton moiety --delete-all`.
+and cyclohexane (Chxn), just to name a few. But of course, if you'd like to start with a clean slate, you are free to
+delete them all.
 
 ### `hist` — Cache Common Compounds
 
@@ -187,17 +220,86 @@ the same formula over and over again can get annoying (I myself frequently forge
 **Dalton-CLi** gives you the option to cache formulas using the `hist` command.
 
 ```bash
-$ dalton hist --save H2O
-H2O saved in user history (mass: 18.015)
+$ dalton hist save H2O "water"
+water saved to user history (mass: 18.015)
 
-$ dalton hist --list
-       H2O :      18.015
+$ dalton hist list
+       water :      18.015
 
-$ dalton calc H2O
-18.015  # Dalton-CLi checks your history before trying to calculate the molecular weight
+$ dalton calc "water"
+18.015 g/mol
 ```
 
-### `opts` — Access and Set User Options
+The `hist` command issued above has done two things: The obvious result is that you can now view an aliased version of
+the compound saved in line 1 in a `list` like the one seen in the [`moiety`](#moiety--custom-chemical-symbols) section.
+This is convenient for projects where you have to reference the same compound over and over again, especially if it's a 
+big compound.
+
+Additionally, aliasing compounds allows you to reference them by name in the `calc` command. Even though referencing
+compounds like this requires more characters, it is easier for a human to remember a word than a group of symbols.
+
+You do not always have to use quotation marks to reference aliased compounds, but you must use them for names that
+contain a space or parentheses, since these are bash control structures. I would recommend you always use them for this
+reason.
+
+As with the `moiety list` command, `hist list` also has a `--verbose` or `-v` option:
+
+```bash
+$ dalton hist save EtOH "ethanol"
+ethanol saved to user history (mass: 46.069 g/mol)
+
+$ dalton hist list -v
+NAME      |  FORMULA  |      MASS
+---------------------------------
+ethanol   |      EtOH |    46.069
+water     |       H2O |    18.015
+```
+
+`hist` also allows you to remove items from your history using the `remove` command:
+
+```bash
+$ dalton hist remove water
+water removed from user history
+
+$ dalton hist list
+    ethanol :    46.069
+```
+
+As with `moiety delete`, you can delete multiple items in one command. You can also remove all items in your history by
+issuing the `clear` command (an alias of `remove --all` / `remove -A`).
+
+One more word on using `calc` with compound aliases. By default, **Dalton-CLi** first checks the user history for
+whatever you ask it to get the mass of, before trying to calculate it out. (This has the added side-effect of
+eliminating some computational overhead involved in parsing chemical formulas that are saved by `hist`, since they are
+basically cached.) If you wish to suppress this behavior, you can use the `-f` or `--formula` flag on `calc`, telling 
+`calc` that whatever you are trying to get the mass of is a formula, not the name of a compound. The opposite flag is
+`-n` or `--name`, which tells `calc` that you want the mass of a compound you've saved with `hist`. Be forewarned that
+setting these flags will make `calc` raise an error if you pass a name after setting the `--formula` flag and
+vice-versa.
+
+```bash
+$ dalton calc ethanol
+46.069 g/mol
+
+$ dalton calc EtOH
+46.069 g/mol  # calc found EtOH in user history before trying to calculate it
+
+$ dalton calc CNCH3  # acetonitrile, not in user history
+41.053 g/mol  # calc couldn't find CNCH3 in the user history, so it did out the whole calculation
+
+$ dalton calc -f EtOH
+46.069 g/mol  # calc worked out the mass of EtOH from scratch
+
+$ dalton calc -f ethanol  # "ethanol" is not a formula
+Zero Mass Error: formula 'ethanol' has a mass of 0
+
+$ dalton calc -n CNCH3  # CNCH3 is not in user history, so this will raise an error
+You have not saved a compound 'CNCH3' in your user history
+```
+
+### `config` – Access and Set User Options
+
+***This is an experimental feature that doesn't quite work yet***
 
 **Dalton-CLi** comes with what I believe are sensible default settings for things like deciding how many significant
 figures to output, whether or not history should be cleared after a while, and so on.
@@ -208,9 +310,10 @@ To view the current option configuration, use the `--show-all` flag.
 
 ```bash
 $ dalton opts --show-all
-mass precision : 3
-mass-spec precision : 1
+sig-figs : 3
+mass-spec-precision : 1
 units : g/mol
+clear-hist-after : 40
 ```
 
 By default, **Dalton-CLi** reports 3 places of precision for each molecule. This is good enough for most applications
@@ -304,7 +407,7 @@ There is a way of generating a DOI for a GitHub repo; if and when this applicati
 this section.
 
 ## License
-Copyright 2018 Aidan T. Manning
+Copyright &copy; 2018 Aidan T. Manning
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
 documentation files (the "Software"), to deal in the Software without restriction, including without limitation the 
