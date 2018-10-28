@@ -1,3 +1,8 @@
+"""
+File: commands/moiety.py
+Purpose: Defines commands for working with custom chemical symbols
+"""
+
 from sys import argv
 
 import click

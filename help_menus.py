@@ -1,3 +1,8 @@
+"""
+File: help-menus.py
+Purpose: Help menus for the various commands
+"""
+
 import datetime as dt
 
 from click import echo, style

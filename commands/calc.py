@@ -1,3 +1,8 @@
+"""
+File: commands/calc.py
+Purpose: Performs calculations in response to user input, and outputs the result
+"""
+
 from sys import argv
 
 import click

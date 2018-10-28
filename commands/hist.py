@@ -1,3 +1,8 @@
+"""
+File: commands/hist.py
+Purpose: Defines commands for saving named compounds
+"""
+
 from sys import argv
 
 import click

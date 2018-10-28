@@ -1,3 +1,8 @@
+"""
+File: setup.py
+Purpose: Helps PyPI index the app pip build it
+"""
+
 from setuptools import setup, find_packages
 
 setup(

@@ -1,3 +1,8 @@
+"""
+File: dalton.py
+Purpose: The root-command for the program, shows app information
+"""
+
 from sys import argv
 
 import click

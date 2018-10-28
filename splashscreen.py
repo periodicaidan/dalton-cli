@@ -1,6 +1,6 @@
 """
 File: splashscreen.py
-Purpose: A little splash screen for the app that doesn't really belong anywhere appropriate
+Purpose: A little splash screen for the app that doesn't really belong anywhere else appropriate
 """
 
 text = """

@@ -1,3 +1,8 @@
+"""
+File: models/Moiety.py
+Purpose: Business logic for working with the user_moieties.yaml file
+"""
+
 import os.path as path
 
 from yaml import load, dump

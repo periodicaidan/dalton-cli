@@ -1,3 +1,8 @@
+"""
+Package: dalton-cli
+Purpose: Root package of the program. Brings everything together and holds the entry point of the app
+"""
+
 from commands import *
 from dalton import dalton
 from commands.config import config

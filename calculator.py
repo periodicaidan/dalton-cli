@@ -1,6 +1,6 @@
 """
 File: calculator.py
-Purpose: Handles stoichiometric calculations
+Purpose: Handles calculations
 """
 
 import os.path as path

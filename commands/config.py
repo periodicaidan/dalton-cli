@@ -1,3 +1,8 @@
+"""
+File: commands/config.py
+Purpose: Interface for viewing and setting various settings
+"""
+
 import click
 
 from models.Config import Config

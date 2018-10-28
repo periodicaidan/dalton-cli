@@ -1,3 +1,4 @@
 mass-spec-precision: 1
 sig-figs: 3
 units: g/mol
+max-hist-size: 40
