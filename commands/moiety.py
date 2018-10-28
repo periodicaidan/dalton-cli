@@ -55,7 +55,7 @@ def change(symbol, formula):
             Moiety.add(symbol, formula)
 
 
-@moiety.command
+@moiety.command("rename")
 @click.argument("old")
 @click.argument("new")
 def rename(old, new):
@@ -68,19 +68,18 @@ def rename(old, new):
         click.echo("%s renamed to %s" % (old, new))
 
 
-@moiety.command
+@moiety.command("delete")
 @click.argument("symbols", nargs=-1)
-def delete(symbols):
+@click.option("-A", "--all", "all_",
+              is_flag=True, default=False)
+def delete(symbols, all_):
+    if all_:
+        click.confirm("This will delete all the moieties you've registered. Are you sure?")
+        Moiety.delete_all()
+        click.echo("All moieties unregistered.")
     for symbol in symbols:
         if symbol in Moiety.symbols():
             Moiety.delete(symbol)
             click.echo("Removed %s from user moieties" % symbol)
         else:
             click.echo("You have not registered any moiety %s" % symbol)
-
-
-@moiety.command
-def delete_all():
-    click.confirm("This will delete all the moieties you've registered. Are you sure?")
-    Moiety.delete_all()
-    click.echo("All moieties unregistered.")

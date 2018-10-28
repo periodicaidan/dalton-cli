@@ -6,24 +6,24 @@ Purpose: Entry point of the program, handles the I/O
 
 from sys import argv
 
+from yaml import load, dump
+
 from app_info import *
 from calculator import *
 from help_menus import *
 
-# def main(*argv):
-#   dalton()
 
 # Entry point
 @click.group("dalton", invoke_without_command=True)
 @click.option("--version", is_flag=True, default=False)
-@click.option("--license", is_flag=True, default=False)
+@click.option("--license", "license_", is_flag=True, default=False)
 @click.option("--help", "-h", "help_", is_flag=True, default=False)
-def dalton(help_, version, license):
+def dalton(help_, version, license_):
     if help_ or len(argv) == 1:
         dalton_help()
     if version:  # :todo: displays version number
         pass
-    if license:
+    if license_:
         click.echo(mit_license())
 
 
@@ -39,7 +39,7 @@ def calc(formula, mass_spec, histogram):
     if mass_spec:
         click.echo(get_mass_spec(formula, histogram))
     else:
-        click.echo("%.3f g/mol" % get_mass(formula))
+        click.echo("%.3f %s" % get_mass(formula), config["units"])
 
 
 @dalton.command(help="Work with custom chemical symbols")
@@ -168,9 +168,11 @@ def hist(ctx,  # command context
             click.echo("You have not saved any compounds")
 
 
-@dalton.command(help="Adjust Dalton-CLI options")
+@dalton.command(help="Adjust Dalton-CLi options")
 @click.option("--sig-figs", "sf",
               type=click.IntRange(1, 10, clamp=True))
+@click.option("--mass-spec-precision", "msp",
+              type=click.IntRange())
 @click.option("--units",
               type=click.Choice(["daltons", "gpm"]))
 def config(sf, units):  # todo: this will require making a whole config file

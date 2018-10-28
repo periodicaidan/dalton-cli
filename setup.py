@@ -4,7 +4,7 @@ setup(
     name="dalton_cli",
     author="Aidan T. Manning",
     author_email="periodicaidan@gmail.com",
-    description="The stoichiometric command line utility",
+    description="The stoichiometric command line tool",
     license="MIT",
     version="0.1.0",
     packages=find_packages(),
@@ -15,6 +15,6 @@ setup(
     ],
     entry_points="""
         [console_scripts]
-        dalton=dalton_scripts.main:dalton
+        dalton=__init__:main
     """
 )

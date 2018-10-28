@@ -11,7 +11,14 @@ from yaml import load, dump
 from calculator import *
 
 
-USER_HISTORY_PATH = path.join(path.dirname(path.abspath(__file__)), "user_history.yaml")
+class History (object):
+    PATH = path.join(path.dirname(path.dirname(path.abspath(__file__))), "user_history.yaml")
+
+    def __init__(self):
+        pass
+
+
+USER_HISTORY_PATH = path.join(path.dirname(path.dirname(path.abspath(__file__))), "user_history.yaml")
 with open(USER_HISTORY_PATH, "r") as uh_yaml:
     history = load(uh_yaml) or {}
 

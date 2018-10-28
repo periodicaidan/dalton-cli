@@ -3,11 +3,10 @@ from sys import argv
 import click
 
 from help_menus import hist_help
-from dalton_scripts.main import dalton
 from models import History
 
 
-@dalton.group("hist",
+@click.group("hist",
               help="",
               invoke_without_command=True)
 @click.option("-h", "--help", "help_",
@@ -17,7 +16,7 @@ def hist(help_):
         hist_help()
 
 
-@hist.command()
+@hist.command("save")
 @click.argument("name")
 @click.argument("formula")
 def save(name, formula):
@@ -28,7 +27,7 @@ def save(name, formula):
         click.echo("%s saved to user history" % name)
 
 
-@hist.command()
+@hist.command("list")
 @click.option("-v", "--verbose",
               is_flag=True, default=False)
 def list_(verbose):
@@ -38,7 +37,7 @@ def list_(verbose):
         click.echo("You have not saved any compounds")
 
 
-@hist.command()
+@hist.command("remove")
 @click.argument("name")
 def remove(name):
     if name in History.keys():
@@ -48,7 +47,7 @@ def remove(name):
         click.echo("You have not saved a compound %s" % name)
 
 
-@hist.command()
+@hist.command("clear")
 @click.confirmation_option()
 def clear():
     if any(History.get()):

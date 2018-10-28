@@ -5,7 +5,7 @@ from yaml import load, dump
 from calculator import *
 
 
-USER_MOIETIES_PATH = path.join(path.dirname(path.abspath(__file__)), "user_moieties.yaml")
+USER_MOIETIES_PATH = path.join(path.dirname(path.dirname(path.abspath(__file__))), "user_moieties.yaml")
 with open(USER_MOIETIES_PATH, "r") as um_yaml:
     moieties = load(um_yaml) or {}
 
