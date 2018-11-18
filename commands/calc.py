@@ -29,4 +29,5 @@ def calc(mass_spec, histogram, formula):
         if mass_spec:
             click.echo(get_mass_spec(formula, histogram))
         else:
-            click.echo("%.3f %s" % (get_mass(formula), config.units))
+            mass = History.get(formula)["mass"] or get_mass(formula)
+            click.echo("%.3f %s" % (mass, config.units))

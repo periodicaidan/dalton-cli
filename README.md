@@ -23,17 +23,8 @@ look up the same compound over and over again), and generate theoretical mass sp
 And as an ongoing open-source project, **Dalton-CLi** is just going to make your chemistry studies easier and easier.
 
 ## Installation
-**Dalton-CLi** is written in Python with [Click](https://click.palletsprojects.com/en/7.x/), so you can install it
-using pip.
-
-```bash
-$ pip install dalton-cli
-```
-
-If you do not have pip, you can read how to download it [here](https://pip.pypa.io/en/stable/installing/).
-
-You may also clone the GitHub repo, but this is not recommended unless you wish to work on it (and anyway, you still 
-have to install it with pip).
+**Dalton-CLi** is a work in progress and there is not (yet) an easy way to install it other than to clone the
+repo and install it with pip.
 
 ```bash
 $ git clone https://github.com/periodicaidan/dalton-cli
@@ -41,12 +32,16 @@ $ cd dalton-cli
 $ pip install .
 ```
 
+If you do not have pip, you can read how to download it [here](https://pip.pypa.io/en/stable/installing/).
+
 If you wish to edit and play with **Dalton-CLi**'s source code, you can do so by performing those three commands above,
 but setting the `--editable` flag on pip:
 
 ```bash
 $ pip install --editable .
 ```
+
+Please note that currently, **Dalton-CLi** only works with Python 3.x
 
 **Dalton-CLi** requires a Python interpreter run. For Macintosh users, you've no need to install anything as
 **Dalton-CLi** will run just fine on the interpreter shipped with every Apple computer.
@@ -106,8 +101,6 @@ $ dalton calc -Mi NaHSO4  # using -M with the -i or --histogram flag will displa
 
 ```
 
-TODO: Expand the features of `calc`
-
 ### `moiety` — Custom Chemical Symbols
 
 Chemical formulas often become long and confusing, so chemists often come up with abbreviations for common *moieties*, 
@@ -115,9 +108,9 @@ or groups of atoms in a molecule that are considered as a unit. One of **Dalton-
 to define their own moieties with the `moiety` command.
 
 To define a new moiety, you use the `add` command, followed by the symbol for your moiety and then the group that
-the symbol represents. To demonstrate, one often sees the group C2H5 (ethyl) in chemistry, so we often abbreviate it "Et". 
-If we would like to calculate the molecular weight of ethanol by simply issuing `dalton calc EtOH`, we would do it as 
-follows:
+the symbol represents. To demonstrate, one often sees the group C<sub>2</sub>H<sub>5</sub> (ethyl) in chemistry, so we 
+often abbreviate it "Et". If we would like to calculate the molecular weight of ethanol by simply issuing `dalton calc 
+EtOH`, we would do it as follows:
 
 ```bash
 $ dalton moiety add Et C2H5  # Define an ethyl moiety
@@ -141,7 +134,7 @@ you would like to use all lowercase letters, you must wrap the symbol in parenth
 as it confuses a human as much as it will confuse the parser).
 
 But **Dalton-CLi** lets you do more with moieties than simply create them. Say that you wanted to add a phenyl
-group (C6H5, a ring structure) to your moiety profile, but you made a mistake and entered it in with one too many
+group (C<sub>6</sub>H<sub>5</sub>, a ring structure) to your moiety profile, but you made a mistake and entered it in with one too many
 hydrogen atoms.
 
 ```bash
@@ -268,130 +261,10 @@ $ dalton hist list
 As with `moiety delete`, you can delete multiple items in one command. You can also remove all items in your history by
 issuing the `clear` command (an alias of `remove --all` / `remove -A`).
 
-One more word on using `calc` with compound aliases. By default, **Dalton-CLi** first checks the user history for
-whatever you ask it to get the mass of, before trying to calculate it out. (This has the added side-effect of
-eliminating some computational overhead involved in parsing chemical formulas that are saved by `hist`, since they are
-basically cached.) If you wish to suppress this behavior, you can use the `-f` or `--formula` flag on `calc`, telling 
-`calc` that whatever you are trying to get the mass of is a formula, not the name of a compound. The opposite flag is
-`-n` or `--name`, which tells `calc` that you want the mass of a compound you've saved with `hist`. Be forewarned that
-setting these flags will make `calc` raise an error if you pass a name after setting the `--formula` flag and
-vice-versa.
-
-```bash
-$ dalton calc ethanol
-46.069 g/mol
-
-$ dalton calc EtOH
-46.069 g/mol  # calc found EtOH in user history before trying to calculate it
-
-$ dalton calc CNCH3  # acetonitrile, not in user history
-41.053 g/mol  # calc couldn't find CNCH3 in the user history, so it did out the whole calculation
-
-$ dalton calc -f EtOH
-46.069 g/mol  # calc worked out the mass of EtOH from scratch
-
-$ dalton calc -f ethanol  # "ethanol" is not a formula
-Zero Mass Error: formula 'ethanol' has a mass of 0
-
-$ dalton calc -n CNCH3  # CNCH3 is not in user history, so this will raise an error
-You have not saved a compound 'CNCH3' in your user history
-```
-
-### `config` – Access and Set User Options
-
-***This is an experimental feature that doesn't quite work yet***
-
-**Dalton-CLi** comes with what I believe are sensible default settings for things like deciding how many significant
-figures to output, whether or not history should be cleared after a while, and so on.
-
-But of course, everyone's needs are different, so **Dalton-CLi** comes with several configurable options.
-
-To view the current option configuration, use the `--show-all` flag.
-
-```bash
-$ dalton opts --show-all
-sig-figs : 3
-mass-spec-precision : 1
-units : g/mol
-clear-hist-after : 40
-```
-
-By default, **Dalton-CLi** reports 3 places of precision for each molecule. This is good enough for most applications
-and doesn't look too unappealing. But if you require more or less precision, you can set the number of decimal places
-using the `--sig-figs` option.
-
-```bash
-$ dalton calc H3PO4
-97.994
-
-$ dalton opts --sig-figs=5
-Molecular weights will be reported to 5 decimal places
-
-$ dalton calc H3PO4
-97.99376
-```
-
-Although Python allows for up to 17 places of precision, you can only set `sig-figs` to between 0 and 10, since no
-element on **Dalton-CLi**'s periodic table has a mass more precise than 10 decimal places.
-
-A similar option exists for setting the precision of percentages output by `calc --mass-spec`:
-`--mass-spec-precision`. This command gives you one decimal place of precision by default.
-
-```bash
-$ dalton calc -M H2CO3
-   H : 3.3%
-   C : 19.4%
-   O : 77.4%
-
-$ dalton opts --mass-spec-precision=3
-Mole ratios will be reported to 3 decimal places
-
-$ dalton calc -M H2CO3
-   H : 3.250%
-   C : 19.365%
-   O : 77.385%
-```
-
-Although it would have been very apropos for **Dalton-CLi** to report molecular weight as daltons, I have chosen simply 
-to let it report it as grams-per-mole (g/mol) by default. This is simply the unit chemists use on a daily basis, 
-and is much more clearly understood. If you would prefer that **Dalton-CLi** report units as daltons (maybe you're in 
-biology, where reporting in daltons is more common), you may set it with the `--use-daltons` flag, and set it to 
-grams-per-mole with `--use-gpm`.
-
-```bash
-$ dalton -opts --use-daltons
-Units for molecular weight will be reported in daltons (Da)
-
-$ dalton calc C10H13N5O4  # adenosine
-267.245 Da
-
-$ dalton opts --use-gpm
-Units for molecular weight will be reported in grams-per-mole (g/mol)
-
-$ dalton calc C10H13N5O4
-267.245 g/mol
-```
-
-If you would ever like to restore the default configuration of all these options at once, you can use the
-`--resotre-defaults` flag.
-
-```bash
-$ dalton opts --restore-defaults
-All settings overwritten with default settings
-```
-
-### `update` — Get Newer Versions of Dalton-CLi
-
-**Dalton-CLi** is always a work in progress. I'm always thinking of ways to make doing stoichiometry easier and less
-tedious for chemists and chemistry students alike. So to make sure you have the latest version, you can run
-`dalton update`.
-
-**Dalton-CLi** will inform you whenever an update is available.
-
 ## Citation
 You need not cite me or my program as a source of data, any more than you need to cite your calculator for the 
 calculations you might do out by hand without **Dalton-CLi**. (If you are a student, you may want to avoid citing it or 
-using it, as it may hinder your learning if you're new and your teacher may dock ponts.) However, I certainly welcome
+using it, as it may hinder your learning if you're new and your teacher may dock points.) However, I certainly welcome
 and appreciate acknowledgement for my work :)
 
 If you do wish to cite my program, unfortunately there is no standard way of citing a GitHub repository. One way to do 
@@ -405,6 +278,16 @@ To get the version and commit number, issue the command `dalton --version`.
 
 There is a way of generating a DOI for a GitHub repo; if and when this application takes off I will get a DOI and change
 this section.
+
+## Future Updates
+
+**Dalton-CLi** is still in beta and I have many ideas for additional features, some of which include (in no particular
+order):
+
+- Add a command for adjusting settings (this mode is listed on the splash screen, but isn't implemented yet)
+- Have a way to create and manage projects
+- Make a mobile version
+- Create an API so that the program can easily be ported to other environments
 
 ## License
 Copyright &copy; 2018 Aidan T. Manning

@@ -33,7 +33,7 @@ def dalton_help():
     echo("  %6s : Get mass info about a compound" % "calc")
     echo("  %6s : Work with user-defined chemical symbols" % "moiety")
     echo("  %6s : Save compound information for later" % "hist")
-    echo("  %6s : Work with Dalton-CLi settings" % "config")
+    echo("  %6s : Work with Dalton-CLi settings (coming soon)" % "config")
 
 def calc_help():
     echo("Usage: dalton calc <mode> <symbol> <formula>")
