@@ -194,8 +194,7 @@ $ dalton moiety list
 ```
 
 You may also batch-delete moieties by passing multiple arguments to `delete`. Note that if you pass a moiety to `delete`
-that has not been registered, it will issue a warning, but the `delete` will still go through by default (for more
-about changing default behavior, see the [`config`](#config--access-and-set-user-options) section). You can also delete
+that has not been registered, it will issue a warning, but the `delete` will still go through by default. You can also delete
 all the registered moieties with the `-A` or `--all` flag. Note that this will bring up a confirmation prompt, which
 you can skip by also setting the `--yes` flag.
 
