@@ -11,8 +11,32 @@ from calculator import *
 
 
 USER_MOIETIES_PATH = path.join(path.dirname(path.dirname(path.abspath(__file__))), "user_moieties.yaml")
-with open(USER_MOIETIES_PATH, "r") as um_yaml:
-    moieties = load(um_yaml) or {}
+try:
+    with open(USER_MOIETIES_PATH, "r") as um_yaml:
+        moieties = load(um_yaml) or {}
+except FileNotFoundError:
+    with open(USER_MOIETIES_PATH, "w") as um_yaml:
+        moieties = load("""
+Chxn:
+  eq_form: C6H11
+  mass: 83.154
+Et:
+  eq_form: C2H5
+  mass: 29.061999999999998
+Ispr:
+  eq_form: C3H7
+  mass: 43.089
+Me:
+  eq_form: CH3
+  mass: 15.035
+Ph:
+  eq_form: C6H5
+  mass: 77.10600000000001
+Pym:
+  eq_form: C5H6N
+mass: 80.11
+        """)
+        dump(moieties, um_yaml, default_flow_style=False)
 
 
 def get(symbol="*"):

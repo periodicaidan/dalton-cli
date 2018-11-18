@@ -12,9 +12,13 @@ from calculator import *
 
 
 USER_HISTORY_PATH = path.join(path.dirname(path.dirname(path.abspath(__file__))), "user_history.yaml")
-with open(USER_HISTORY_PATH, "r") as uh_yaml:
-    history = load(uh_yaml) or {}
-
+try:
+    with open(USER_HISTORY_PATH, "r") as uh_yaml:
+        history = load(uh_yaml) or {}
+except FileNotFoundError:
+    with open(USER_HISTORY_PATH, "w") as uh_yaml:
+        history = {}
+        dump(history, uh_yaml, default_flow_style=False)
 
 def get(alias="*"):
     if alias == "*":
