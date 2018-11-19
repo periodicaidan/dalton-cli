@@ -212,7 +212,7 @@ the same formula over and over again can get annoying (I myself frequently forge
 **Dalton-CLi** gives you the option to cache formulas using the `hist` command.
 
 ```bash
-$ dalton hist save H2O "water"
+$ dalton hist save "water" H2O
 water saved to user history (mass: 18.015)
 
 $ dalton hist list
@@ -237,7 +237,7 @@ reason.
 As with the `moiety list` command, `hist list` also has a `--verbose` or `-v` option:
 
 ```bash
-$ dalton hist save EtOH "ethanol"
+$ dalton hist save "ethanol" EtOH
 ethanol saved to user history (mass: 46.069 g/mol)
 
 $ dalton hist list -v
@@ -250,7 +250,7 @@ water     |       H2O |    18.015
 `hist` also allows you to remove items from your history using the `remove` command:
 
 ```bash
-$ dalton hist remove water
+$ dalton hist remove "water"
 water removed from user history
 
 $ dalton hist list

@@ -21,27 +21,21 @@ class Config (object):
 
     @classmethod
     def setup(cls):
-        with open(cls.PATH, "r") as uc_yaml:
-            conf = cls()
-            settings = load(uc_yaml)
-            if type(settings) == Config:
-                conf = settings
-            else:
-                conf = cls(**settings)
+        try:
+            with open(cls.PATH, "r") as uc_yaml:
+                settings = load(uc_yaml)
+                if type(settings) == Config:
+                    conf = settings
+                elif settings is None:
+                    conf = cls(**cls.DEFAULTS)
+                else:
+                    conf = cls(**settings)
+                return conf
+        except FileNotFoundError:
+            with open(cls.PATH, "w") as uc_yaml:
+                conf = cls(**cls.DEFAULTS)
+                dump(conf, uc_yaml, default_flow_style=False)
             return conf
-        # try:
-        #     uc_yaml = open(cls.PATH, "r+")
-        #     settings = load(uc_yaml)
-        #     if type(settings) == Config:
-        #         conf = settings
-        #     else:
-        #         conf = cls(**settings)
-        # except FileNotFoundError:
-        #     dump(uc_yaml, cls.DEFAULTS, default_flow_style=False)
-        #     conf = cls(**cls.DEFAULTS)
-        # finally:
-        #     uc_yaml.close()
-        #     return conf
 
     def commit(self):
         with open(Config.PATH, "w") as uc_yaml:
